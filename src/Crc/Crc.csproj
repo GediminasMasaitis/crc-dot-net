@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Crc.NET</PackageId>
+    <Authors>Gediminas Masaitis</Authors>
+    <Company />
+    <Product>Crc.NET</Product>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/GediminasMasaitis/crc-dot-net</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/GediminasMasaitis/crc-dot-net/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/GediminasMasaitis/crc-dot-net</RepositoryUrl>
+    <PackageTags>crc</PackageTags>
+    <Description>.NET Standard library for calculating any CRC checksums</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
 </Project>
