@@ -27,17 +27,48 @@ namespace Crc
             TableCache = new Dictionary<CrcParameters, ulong[]>();
         }
 
+        private void AssertConfiguration(bool condition, string message)
+        {
+            if (!condition)
+            {
+                throw new CrcConfigurationException(message);
+            }
+        }
+
+        private void DoChecks()
+        {
+            if (!Parameters.ExpectedCheck.HasValue)
+            {
+                return;
+            }
+
+            var testBytes = new byte[] { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39 };
+            var crc = ComputeHash(testBytes);
+            Array.Resize(ref crc, 8);
+            var calculatedCheck = BitConverter.ToUInt64(crc, 0);
+            var expectedCheck = Parameters.ExpectedCheck.Value;
+            Reset();
+            AssertConfiguration(calculatedCheck == expectedCheck, "Crc check failed");
+        }
+
         public CrcBase(CrcParameters parameters)
         {
             Parameters = parameters;
 
+            AssertConfiguration(Parameters.Size > 0, "CRC size must be greater than 0");
+            AssertConfiguration(Parameters.Size <= 64, "CRC size must not exceed 64");
+
             HashSize = parameters.Size;
-            Shift = (byte)(parameters.Size - 8);
+            Shift = parameters.Size - 8;
             MsbMask = 1UL << (parameters.Size - 1);
             FullMask = parameters.Size < sizeof(ulong) * 8 ? (1UL << parameters.Size) - 1 : ~0UL;
             DoReflectOutput = Parameters.ReflectInput ^ Parameters.ReflectOutput;
             CorrectedInitialValue = Parameters.ReflectInput ? ReflectCrc(Parameters.InitialValue) : Parameters.InitialValue;
             AutoReset = false;
+
+            AssertConfiguration((Parameters.Polynomial & FullMask) == Parameters.Polynomial, "Polynomial is larger than the specified CRC size");
+            AssertConfiguration((Parameters.InitialValue & FullMask) == Parameters.InitialValue, "Initial value is larger than the specified CRC size");
+            AssertConfiguration((Parameters.FinalXorValue & FullMask) == Parameters.FinalXorValue, "Final xor value is larger than the specified CRC size");
 
             if (TableCache.TryGetValue(parameters, out var lookupTable))
             {
@@ -48,6 +79,7 @@ namespace Crc
             TableCache.Add(parameters, Table);
 
             Reset();
+            DoChecks();
         }
 
         public CrcBase(byte length, ulong polynomial, ulong initialValue, ulong finalXorValue, bool reflectInput, bool reflectOutput)
@@ -55,24 +87,36 @@ namespace Crc
         {
         }
 
-        private byte ReflectByte(byte b)
+        private byte ReflectByte(byte b, int len)
         {
-            b = (byte)((b & 0xF0) >> 4 | (b & 0x0F) << 4);
+            byte result = 0;
+            for (var i = 0; i < len; ++i)
+            {
+                result <<= 1;
+                result |= (byte)(b & 1);
+                b >>= 1;
+            }
+            return result;
+
+            /*b = (byte)((b & 0xF0) >> 4 | (b & 0x0F) << 4);
             b = (byte)((b & 0xCC) >> 2 | (b & 0x33) << 2);
             b = (byte)((b & 0xAA) >> 1 | (b & 0x55) << 1);
-            return b;
+            return b;*/
         }
 
         private ulong ReflectCrc(ulong crc)
         {
+            var remainingSize = Parameters.Size;
             ulong reflected = 0;
             for (var i = 0; i < Parameters.Size; i += 8)
             {
+                var len = remainingSize < 8 ? remainingSize : (byte)8;
+                remainingSize -= len;
                 var b = (byte)(crc & 0xFF);
-                var rb = ReflectByte(b);
-                reflected <<= 8;
+                var rb = ReflectByte(b, len);
+                reflected <<= len;
                 reflected |= rb;
-                crc >>= 8;
+                crc >>= len;
             }
             return reflected;
         }
@@ -108,7 +152,7 @@ namespace Crc
             var refl = new ulong[tableSize];
             for (var i = 0; i < tableSize; ++i)
             {
-                var reflOffset = ReflectByte((byte)i);
+                var reflOffset = ReflectByte((byte)i, 8);
                 var reflEntry = ReflectCrc(table[reflOffset]);
                 refl[i] = reflEntry;
             }
@@ -135,6 +179,15 @@ namespace Crc
                     CurrentValue = ((CurrentValue >> 8) ^ Table[offs]) & FullMask;
                 }
             }
+            else if (Shift < 0)
+            {
+                for (var i = ibStart; i < ibStart + cbSize; i++)
+                {
+                    var dataByte = array[i];
+                    var offs = dataByte ^ (CurrentValue << -Shift);
+                    CurrentValue = ((CurrentValue << 8) ^ Table[offs]) & FullMask;
+                }
+            }
             else
             {
                 for (var i = ibStart; i < ibStart + cbSize; i++)
@@ -148,16 +201,19 @@ namespace Crc
 
         protected sealed override byte[] HashFinal()
         {
-            var result = CurrentValue ^ Parameters.FinalXorValue;
+            var result = CurrentValue;
             if (DoReflectOutput)
             {
                 result = ReflectCrc(result);
             }
+            result ^= Parameters.FinalXorValue;
             if (AutoReset)
             {
                 Reset();
             }
-            return BitConverter.GetBytes(result).Take(HashSize / 8).ToArray();
+
+            var byteSize = (HashSize+7) / 8;
+            return BitConverter.GetBytes(result).Take(byteSize).ToArray();
         }
 
         public override int HashSize { get; }

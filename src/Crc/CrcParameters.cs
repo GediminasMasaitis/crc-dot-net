@@ -8,8 +8,9 @@
         public ulong FinalXorValue { get; }
         public bool ReflectInput { get; }
         public bool ReflectOutput { get; }
+        public ulong? ExpectedCheck { get; }
 
-        public CrcParameters(byte size, ulong polynomial, ulong initialValue, ulong finalXorValue, bool reflectInput, bool reflectOutput)
+        public CrcParameters(byte size, ulong polynomial, ulong initialValue, ulong finalXorValue, bool reflectInput, bool reflectOutput, ulong? expectedCheck = null)
         {
             Size = size;
             Polynomial = polynomial;
@@ -17,6 +18,7 @@
             FinalXorValue = finalXorValue;
             ReflectInput = reflectInput;
             ReflectOutput = reflectOutput;
+            ExpectedCheck = expectedCheck;
         }
 
         protected bool Equals(CrcParameters other)
