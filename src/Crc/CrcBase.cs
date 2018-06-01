@@ -82,8 +82,8 @@ namespace Crc
             DoChecks();
         }
 
-        public CrcBase(byte length, ulong polynomial, ulong initialValue, ulong finalXorValue, bool reflectInput, bool reflectOutput)
-            : this(new CrcParameters(length, polynomial, initialValue, finalXorValue, reflectInput, reflectOutput))
+        public CrcBase(byte length, ulong polynomial, ulong initialValue, ulong finalXorValue, bool reflectInput, bool reflectOutput, ulong? check = null)
+            : this(new CrcParameters(length, polynomial, initialValue, finalXorValue, reflectInput, reflectOutput, check))
         {
         }
 
