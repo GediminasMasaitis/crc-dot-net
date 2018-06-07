@@ -1,18 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <PackageId>Crc.NET</PackageId>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <PackageId>CrcDotNET</PackageId>
     <Authors>Gediminas Masaitis</Authors>
+    <Owners>Gediminas Masaitis</Owners>
     <Company />
     <Product>Crc.NET</Product>
+    <Title>Crc.NET</Title>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/GediminasMasaitis/crc-dot-net</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/GediminasMasaitis/crc-dot-net/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/GediminasMasaitis/crc-dot-net</RepositoryUrl>
+    <Copyright>Copyright 2018</Copyright>
     <PackageTags>crc</PackageTags>
     <Description>.NET Standard library for calculating any CRC checksums</Description>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Summary>.NET Standard library for calculating any CRC checksums</Summary>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
 </Project>

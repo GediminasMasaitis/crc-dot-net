@@ -213,10 +213,10 @@ namespace Crc
             }
 
             var byteSize = (HashSize+7) / 8;
+            
             return BitConverter.GetBytes(result).Take(byteSize).ToArray();
         }
 
         public override int HashSize { get; }
-        public override bool CanReuseTransform => true;
     }
 }
