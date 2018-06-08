@@ -23,7 +23,7 @@
 
         protected bool Equals(CrcParameters other)
         {
-            return Size == other.Size && Polynomial == other.Polynomial && InitialValue == other.InitialValue && FinalXorValue == other.FinalXorValue && ReflectInput == other.ReflectInput && ReflectOutput == other.ReflectOutput;
+            return Size == other.Size && Polynomial == other.Polynomial && InitialValue == other.InitialValue && FinalXorValue == other.FinalXorValue && ReflectInput == other.ReflectInput && ReflectOutput == other.ReflectOutput && ExpectedCheck == other.ExpectedCheck;
         }
 
         public override bool Equals(object obj)
@@ -31,7 +31,7 @@
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((CrcParameters)obj);
+            return Equals((CrcParameters) obj);
         }
 
         public override int GetHashCode()
@@ -44,6 +44,7 @@
                 hashCode = (hashCode * 397) ^ FinalXorValue.GetHashCode();
                 hashCode = (hashCode * 397) ^ ReflectInput.GetHashCode();
                 hashCode = (hashCode * 397) ^ ReflectOutput.GetHashCode();
+                hashCode = (hashCode * 397) ^ ExpectedCheck.GetHashCode();
                 return hashCode;
             }
         }

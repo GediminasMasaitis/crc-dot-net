@@ -73,11 +73,13 @@ namespace Crc
             if (TableCache.TryGetValue(parameters, out var lookupTable))
             {
                 Table = lookupTable;
-                return;
             }
-            Table = CalculateNewLookupTable();
-            TableCache.Add(parameters, Table);
-
+            else
+            {
+                Table = CalculateNewLookupTable();
+                TableCache.Add(parameters, Table);
+            }
+            
             Reset();
             DoChecks();
         }
