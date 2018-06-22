@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 
 namespace Crc
@@ -215,8 +214,10 @@ namespace Crc
             }
 
             var byteSize = (HashSize+7) / 8;
-            
-            return BitConverter.GetBytes(result).Take(byteSize).ToArray();
+
+            var arr = BitConverter.GetBytes(result);
+            Array.Resize(ref arr, byteSize);
+            return arr;
         }
 
         public override int HashSize { get; }

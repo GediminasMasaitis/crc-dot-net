@@ -14,8 +14,8 @@ namespace Crc.Demo
 
         static void Main(string[] args)
         {
-            var runner = new KnownCrcCheckRunner();
-            runner.RunChecks();
+            //var runner = new KnownCrcCheckRunner();
+            //runner.RunChecks();
 
             var crc = new Crc32();
             var bytes = Encoding.ASCII.GetBytes("abc123");
