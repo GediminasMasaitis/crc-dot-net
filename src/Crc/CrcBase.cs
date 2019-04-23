@@ -69,14 +69,17 @@ namespace Crc
             AssertConfiguration((Parameters.InitialValue & FullMask) == Parameters.InitialValue, "Initial value is larger than the specified CRC size");
             AssertConfiguration((Parameters.FinalXorValue & FullMask) == Parameters.FinalXorValue, "Final xor value is larger than the specified CRC size");
 
-            if (TableCache.TryGetValue(parameters, out var lookupTable))
+            lock (TableCache)
             {
-                Table = lookupTable;
-            }
-            else
-            {
-                Table = CalculateNewLookupTable();
-                TableCache.Add(parameters, Table);
+                if (TableCache.TryGetValue(parameters, out var lookupTable))
+                {
+                    Table = lookupTable;
+                }
+                else
+                {
+                    Table = CalculateNewLookupTable();
+                    TableCache.Add(parameters, Table);
+                }
             }
             
             Reset();

@@ -17,8 +17,8 @@
     <Description>.NET Standard library for calculating any CRC checksums</Description>
     <Summary>.NET Standard library for calculating any CRC checksums</Summary>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>1.0.2</Version>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <Version>1.0.3</Version>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
   </PropertyGroup>
 
 </Project>
